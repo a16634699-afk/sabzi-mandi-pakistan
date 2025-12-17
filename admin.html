@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel - Sabzi Mandi Rates</title>
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #228B22;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #228B22;
+            padding-bottom: 15px;
+        }
+        
+        .login-section {
+            text-align: center;
+            padding: 40px;
+            background: #f8fff8;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+        
+        #adminPanel {
+            display: none;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #228B22;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #006400;
+        }
+        
+        .danger-btn {
+            background: #dc3545;
+        }
+        
+        .danger-btn:hover {
+            background: #c82333;
+        }
+        
+        .rates-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+        }
+        
+        .rates-table th {
+            background: #e8f5e8;
+            color: #006400;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #228B22;
+        }
+        
+        .rates-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #6c757d;
+            padding: 10px 20px;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logout Button (Hidden initially) -->
+    <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display:none;">🚪 Logout</button>
+    
+    <div class="admin-container">
+        <h1>🔐 Sabzi Mandi Admin Panel</h1>
+        <h3 style="text-align: center; color: #666;">Pakistan Market Rates Management</h3>
+        
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <h2>Admin Login Required</h2>
+            <p>Enter password to access admin panel</p>
+            <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+            <br>
+            <button onclick="login()">Login</button>
+            <div id="loginError" class="message error">❌ Incorrect password!</div>
+        </div>
+        
+        <!-- Admin Panel (Hidden until login) -->
+        <div id="adminPanel">
+            <!-- Update Form -->
+            <h2>➕ Add/Update Daily Rates</h2>
+            <div class="form-group">
+                <select id="citySelect">
+                    <option value="">Select City</option>
+                    <option value="multan">Multan</option>
+                    <option value="khanewal">Khanewal</option>
+                    <option value="kabirwala">Kabirwala</option>
+                </select>
+                
+                <select id="vegetableSelect">
+                    <option value="">Select Vegetable</option>
+                    <option value="tomato">ٹماٹر (Tomato)</option>
+                    <option value="onion">پیاز (Onion)</option>
+                    <option value="potato">آلو (Potato)</option>
+                    <option value="cucumber">کھیرا (Cucumber)</option>
+                    <option value="capsicum">شملہ مرچ (Capsicum)</option>
+                    <option value="spinach">پالک (Spinach)</option>
+                    <option value="carrot">گاجر (Carrot)</option>
+                </select>
+                
+                <input type="number" id="priceInput" placeholder="Price (PKR)">
+                
+                <select id="unitSelect">
+                    <option value="kg">کیلو (kg)</option>
+                    <option value="dozen">درجن (Dozen)</option>
+                    <option value="piece">تکڑا (Piece)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <select id="qualitySelect">
+                    <option value="good">اچھا (Good)</option>
+                    <option value="medium">درمیانہ (Medium)</option>
+                    <option value="fresh">تازہ (Fresh)</option>
+                    <option value="premium">اعلیٰ (Premium)</option>
+                </select>
+                
+                <input type="date" id="dateInput" value="">
+                
+                <button onclick="addRate()">➕ Add New Rate</button>
+                <button onclick="updateAll()" style="background: #ff9800;">🔄 Update All</button>
+            </div>
+            
+            <div id="successMessage" class="message success">✅ Rate updated successfully!</div>
+            
+            <!-- Current Rates Display -->
+            <h2>📋 Current Market Rates</h2>
+            <table class="rates-table" id="ratesTable">
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>Vegetable</th>
+                        <th>Price</th>
+                        <th>Unit</th>
+                        <th>Quality</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="ratesBody">
+                    <!-- Rates will load here -->
+                </tbody>
+            </table>
+            
+            <!-- Bulk Operations -->
+            <h2>📁 Bulk Operations</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <p><strong>Export/Import Options:</strong></p>
+                <button onclick="exportToExcel()">📥 Export to Excel</button>
+                <button onclick="importFromExcel()">📤 Import from Excel</button>
+                <button class="danger-btn" onclick="deleteAll()">🗑️ Delete All Rates</button>
+            </div>
+            
+            <!-- Instructions -->
+            <div style="margin-top: 30px; padding: 20px; background: #e8f5e8; border-radius: 10px;">
+                <h3>📖 Instructions:</h3>
+                <p>1. Daily rates update karne ke liye form use karein</p>
+                <p>2. Excel se bulk update ke liye template download karein</p>
+                <p>3. Password change karne ke liye contact developer</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ADMIN PASSWORD - CHANGE THIS
+        const ADMIN_PASSWORD = "pakistan123";
+        
+        // Sample rates data
+        let ratesData = [
+            { id: 1, city: "multan", vegetable: "tomato", price: "80", unit: "kg", quality: "good", date: "2024-01-15" },
+            { id: 2, city: "multan", vegetable: "onion", price: "60", unit: "kg", quality: "medium", date: "2024-01-15" },
+            { id: 3, city: "khanewal", vegetable: "potato", price: "42", unit: "kg", quality: "fresh", date: "2024-01-15" }
+        ];
+        
+        // Login function
+        function login() {
+            const password = document.getElementById('adminPassword').value;
+            if(password === ADMIN_PASSWORD) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'block';
+                loadRatesTable();
+                setDefaultDate();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+        }
+        
+        // Set today's date as default
+        function setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').value = today;
+        }
+        
+        // Add new rate
+        function addRate() {
+            const city = document.getElementById('citySelect').value;
+            const vegetable = document.getElementById('vegetableSelect').value;
+            const price = document.getElementById('priceInput').value;
+            const unit = document.getElementById('unitSelect').value;
+            const quality = document.getElementById('qualitySelect').value;
+            const date = document.getElementById('dateInput').value;
+            
+            if(!city || !vegetable || !price) {
+                alert("Please fill all required fields!");
+                return;
+            }
+            
+            // Add to rates data
+            ratesData.push({
+                id: ratesData.length + 1,
+                city: city,
+                vegetable: vegetable,
+                price: price,
+                unit: unit,
+                quality: quality,
+                date: date
+            });
+            
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+            
+            // Reload table
+            loadRatesTable();
+            
+            // Clear form
+            document.getElementById('priceInput').value = '';
+        }
+        
+        // Load rates in table
+        function loadRatesTable() {
+            const tbody = document.getElementById('ratesBody');
+            tbody.innerHTML = '';
+            
+            ratesData.forEach(rate => {
+                const row = `<tr>
+                    <td>${getCityName(rate.city)}</td>
+                    <td>${getVegetableName(rate.vegetable)}</td>
+                    <td>₨ ${rate.price}</td>
+                    <td>${rate.unit}</td>
+                    <td>${getQualityName(rate.quality)}</td>
+                    <td>${rate.date}</td>
+                    <td>
+                        <button onclick="editRate(${rate.id})">✏️ Edit</button>
+                        <button class="danger-btn" onclick="deleteRate(${rate.id})">🗑️ Delete</button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        // Helper functions
+        function getCityName(code) {
+            const cities = {
+                'multan': 'Multan',
+                'khanewal': 'Khanewal',
+                'kabirwala': 'Kabirwala'
+            };
+            return cities[code] || code;
+        }
+        
+        function getVegetableName(code) {
+            const vegetables = {
+                'tomato': 'ٹماٹر (Tomato)',
+                'onion': 'پیاز (Onion)',
+                'potato': 'آلو (Potato)',
+                'cucumber': 'کھیرا (Cucumber)',
+                'capsicum': 'شملہ مرچ (Capsicum)',
+                'spinach': 'پالک (Spinach)',
+                'carrot': 'گاجر (Carrot)'
+            };
+            return vegetables[code] || code;
+        }
+        
+        function getQualityName(code) {
+            const qualities = {
+                'good': 'اچھا (Good)',
+                'medium': 'درمیانہ (Medium)',
+                'fresh': 'تازہ (Fresh)',
+                'premium': 'اعلیٰ (Premium)'
+            };
+            return qualities[code] || code;
+        }
+        
+        // Other functions
+        function updateAll() {
+            alert("All rates will be updated from the main database.");
+        }
+        
+        function exportToExcel() {
+            alert("Rates exported to Excel format.");
+        }
+        
+        function importFromExcel() {
+            alert("Please upload Excel file with rates data.");
+        }
+        
+        function deleteAll() {
+            if(confirm("Are you sure you want to delete ALL rates?")) {
+                ratesData = [];
+                loadRatesTable();
+                alert("All rates deleted!");
+            }
+        }
+        
+        function editRate(id) {
+            alert("Edit rate with ID: " + id);
+        }
+        
+        function deleteRate(id) {
+            if(confirm("Delete this rate?")) {
+                ratesData = ratesData.filter(rate => rate.id !== id);
+                loadRatesTable();
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            // Check if already logged in (for demo)
+            const isLoggedIn = localStorage.getItem('adminLoggedIn');
+            if(isLoggedIn) {
+                login();
+            }
+        };
+    </script>
+</body>
+</html>
