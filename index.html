@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پاکستان سبزی منڈی ریٹس | Pakistan Sabzi Mandi Rates</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', 'Noto Sans Arabic', sans-serif;
+            background: #f8fff8;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #006400, #228B22);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,100,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .city-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background: white;
+            border: 2px solid #228B22;
+            color: #228B22;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover, .tab-btn.active {
+            background: #228B22;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .market-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #228B22;
+            display: none;
+        }
+        
+        .market-card.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .veg-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .veg-table th {
+            background: #e8f5e8;
+            color: #006400;
+            padding: 15px;
+            text-align: right;
+            border-bottom: 2px solid #228B22;
+        }
+        
+        .veg-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .veg-table tr:hover {
+            background: #f9fff9;
+        }
+        
+        .price {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .update-time {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .city-tabs { flex-direction: column; align-items: center; }
+            .tab-btn { width: 90%; }
+            .veg-table { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🇵🇰 پاکستان سبزی منڈی ریٹس</h1>
+        <p>Pakistan Sabzi Mandi Live Rates - Multan, Khanewal, Kabirwala</p>
+    </div>
+    
+    <div class="container">
+        <!-- City Selection Tabs -->
+        <div class="city-tabs">
+            <button class="tab-btn active" onclick="showCity('multan')">ملتان | Multan</button>
+            <button class="tab-btn" onclick="showCity('khanewal')">خانیوال | Khanewal</button>
+            <button class="tab-btn" onclick="showCity('kabirwala')">کبیروالہ | Kabirwala</button>
+        </div>
+        
+        <!-- Multan Market Card -->
+        <div class="market-card active" id="multan-card">
+            <h2>🏙️ ملتان فروٹ اینڈ سبزی منڈی</h2>
+            <h3>Multan Fruit & Vegetable Market</h3>
+            
+            <table class="veg-table">
+                <thead>
+                    <tr>
+                        <th>سبزی | Vegetable</th>
+                        <th>قیمت | Price</th>
+                        <th>یونٹ | Unit</th>
+                        <th>کوالٹی | Quality</th>
+                    </tr>
+                </thead>
+                <tbody id="multan-rates">
+                    <!-- Rates loaded by JavaScript -->
+                </tbody>
+            </table>
+            
+            <div class="update-time">
+                ✅ آخری اپ ڈیٹ: آج صبح 8:00 بجے | Last Update: Today 8:00 AM
+            </div>
+        </div>
+        
+        <!-- Khanewal Market Card -->
+        <div class="market-card" id="khanewal-card">
+            <h2>🏙️ خانیوال ہول سیل مارکیٹ</h2>
+            <h3>Khanewal Wholesale Market</h3>
+            
+            <table class="veg-table">
+                <thead>
+                    <tr>
+                        <th>سبزی | Vegetable</th>
+                        <th>قیمت | Price</th>
+                        <th>یونٹ | Unit</th>
+                        <th>کوالٹی | Quality</th>
+                    </tr>
+                </thead>
+                <tbody id="khanewal-rates">
+                    <!-- Rates loaded by JavaScript -->
+                </tbody>
+            </table>
+            
+            <div class="update-time">
+                ✅ آخری اپ ڈیٹ: آج صبح 8:30 بجے | Last Update: Today 8:30 AM
+            </div>
+        </div>
+        
+        <!-- Kabirwala Market Card -->
+        <div class="market-card" id="kabirwala-card">
+            <h2>🏙️ کبیروالہ زرعی مارکیٹ</h2>
+            <h3>Kabirwala Agricultural Market</h3>
+            
+            <table class="veg-table">
+                <thead>
+                    <tr>
+                        <th>سبزی | Vegetable</th>
+                        <th>قیمت | Price</th>
+                        <th>یونٹ | Unit</th>
+                        <th>کوالٹی | Quality</th>
+                    </tr>
+                </thead>
+                <tbody id="kabirwala-rates">
+                    <!-- Rates loaded by JavaScript -->
+                </tbody>
+            </table>
+            
+            <div class="update-time">
+                ✅ آخری اپ ڈیٹ: آج صبح 9:00 بجے | Last Update: Today 9:00 AM
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2024 پاکستان سبزی منڈی ریٹس | Pakistan Sabzi Mandi Rates</p>
+        <p>📞 Contact: info@sabzimandipakistan.com | 📍 Multan, Pakistan</p>
+        <p style="margin-top: 10px;"><a href="admin.html" style="color: #228B22;">Admin Panel (Password Protected)</a></p>
+    </footer>
+
+    <script>
+        // Initial data
+        const marketRates = {
+            multan: [
+                { vegetable: "ٹماٹر | Tomato", price: "₨ 80", unit: "کلو | kg", quality: "اچھا | Good" },
+                { vegetable: "پیاز | Onion", price: "₨ 60", unit: "کلو | kg", quality: "درمیانہ | Medium" },
+                { vegetable: "آلو | Potato", price: "₨ 45", unit: "کلو | kg", quality: "تازہ | Fresh" },
+                { vegetable: "کھیرا | Cucumber", price: "₨ 50", unit: "کلو | kg", quality: "اچھا | Good" },
+                { vegetable: "شملہ مرچ | Capsicum", price: "₨ 100", unit: "کلو | kg", quality: "اعلیٰ | Premium" }
+            ],
+            khanewal: [
+                { vegetable: "ٹماٹر | Tomato", price: "₨ 75", unit: "کلو | kg", quality: "اچھا | Good" },
+                { vegetable: "پیاز | Onion", price: "₨ 58", unit: "کلو | kg", quality: "درمیانہ | Medium" },
+                { vegetable: "آلو | Potato", price: "₨ 42", unit: "کلو | kg", quality: "تازہ | Fresh" }
+            ],
+            kabirwala: [
+                { vegetable: "ٹماٹر | Tomato", price: "₨ 78", unit: "کلو | kg", quality: "اچھا | Good" },
+                { vegetable: "پیاز | Onion", price: "₨ 62", unit: "کلو | kg", quality: "درمیانہ | Medium" },
+                { vegetable: "آلو | Potato", price: "₨ 44", unit: "کلو | kg", quality: "تازہ | Fresh" }
+            ]
+        };
+        
+        // Load initial data
+        function loadRates() {
+            for(const city in marketRates) {
+                const table = document.getElementById(`${city}-rates`);
+                table.innerHTML = '';
+                
+                marketRates[city].forEach(item => {
+                    const row = `<tr>
+                        <td>${item.vegetable}</td>
+                        <td class="price">${item.price}</td>
+                        <td>${item.unit}</td>
+                        <td>${item.quality}</td>
+                    </tr>`;
+                    table.innerHTML += row;
+                });
+            }
+        }
+        
+        // Show selected city
+        function showCity(city) {
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show selected card
+            document.querySelectorAll('.market-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`${city}-card`).classList.add('active');
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+            loadRates();
+        };
+    </script>
+</body>
+</html>
