@@ -1,408 +1,540 @@
 <!DOCTYPE html>
-<html>
+<html lang="ur" dir="rtl">
 <head>
-    <title>Admin Panel - Sabzi Mandi Rates</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پاکستان سبزی منڈی ریٹس | Pakistan Sabzi Mandi Rates</title>
     <style>
-        body {
-            background: #f8f9fa;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #f0f8f0; color: #333; line-height: 1.6; padding: 15px; }
         
-        .admin-container {
-            max-width: 900px;
+        .container {
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
-            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
         
-        h1 {
+        .header {
+            background: linear-gradient(to right, #006400, #228B22);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
+        
+        .city-tabs {
+            display: flex;
+            background: #e8f5e8;
+            padding: 10px;
+            gap: 10px;
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            background: white;
             color: #228B22;
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #228B22;
-            padding-bottom: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+            border: 2px solid #228B22;
+            transition: all 0.3s;
         }
         
-        .login-section {
-            text-align: center;
-            padding: 40px;
-            background: #f8fff8;
-            border-radius: 10px;
-            border: 2px solid #ddd;
+        .tab-btn.active, .tab-btn:hover {
+            background: #228B22;
+            color: white;
+            transform: translateY(-2px);
         }
         
-        #adminPanel {
+        .market-card {
+            padding: 20px;
             display: none;
         }
         
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
+        .market-card.active {
+            display: block;
+            animation: fadeIn 0.5s;
         }
         
-        .form-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        button {
-            background: #228B22;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px 5px;
-            transition: background 0.3s;
+        .market-title {
+            color: #006400;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f5e8;
         }
         
-        button:hover {
-            background: #006400;
-        }
-        
-        .danger-btn {
-            background: #dc3545;
-        }
-        
-        .danger-btn:hover {
-            background: #c82333;
-        }
-        
-        .rates-table {
+        .veg-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
-            background: white;
+            margin-top: 10px;
         }
         
-        .rates-table th {
+        .veg-table th {
             background: #e8f5e8;
             color: #006400;
-            padding: 15px;
-            text-align: left;
+            padding: 12px 15px;
+            text-align: right;
             border-bottom: 2px solid #228B22;
         }
         
-        .rates-table td {
-            padding: 15px;
+        .veg-table td {
+            padding: 12px 15px;
             border-bottom: 1px solid #eee;
         }
         
-        .logout-btn {
+        .veg-table tr:hover {
+            background: #f9fff9;
+        }
+        
+        .price {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .update-time {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            background: #f8f9fa;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .city-tabs { flex-direction: column; }
+            .tab-btn { width: 100%; }
+            .veg-table { font-size: 0.9rem; }
+            .veg-table th, .veg-table td { padding: 8px 10px; }
+        }
+        
+        .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #6c757d;
-            padding: 10px 20px;
-        }
-        
-        .message {
-            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
             border-radius: 8px;
-            margin: 15px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
             display: none;
+            animation: slideIn 0.3s;
         }
         
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Logout Button (Hidden initially) -->
-    <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display:none;">🚪 Logout</button>
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
     
-    <div class="admin-container">
-        <h1>🔐 Sabzi Mandi Admin Panel</h1>
-        <h3 style="text-align: center; color: #666;">Pakistan Market Rates Management</h3>
-        
-        <!-- Login Section -->
-        <div class="login-section" id="loginSection">
-            <h2>Admin Login Required</h2>
-            <p>Enter password to access admin panel</p>
-            <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-            <br>
-            <button onclick="login()">Login</button>
-            <div id="loginError" class="message error">❌ Incorrect password!</div>
+    <div class="container">
+        <div class="header">
+            <h1>🇵🇰 پاکستان سبزی منڈی ریٹس</h1>
+            <p>Pakistan Sabzi Mandi Live Rates - Multan, Khanewal, Kabirwala</p>
         </div>
         
-        <!-- Admin Panel (Hidden until login) -->
-        <div id="adminPanel">
-            <!-- Update Form -->
-            <h2>➕ Add/Update Daily Rates</h2>
-            <div class="form-group">
-                <select id="citySelect">
-                    <option value="">Select City</option>
-                    <option value="multan">Multan</option>
-                    <option value="khanewal">Khanewal</option>
-                    <option value="kabirwala">Kabirwala</option>
-                </select>
-                
-                <select id="vegetableSelect">
-                    <option value="">Select Vegetable</option>
-                    <option value="tomato">ٹماٹر (Tomato)</option>
-                    <option value="onion">پیاز (Onion)</option>
-                    <option value="potato">آلو (Potato)</option>
-                    <option value="cucumber">کھیرا (Cucumber)</option>
-                    <option value="capsicum">شملہ مرچ (Capsicum)</option>
-                    <option value="spinach">پالک (Spinach)</option>
-                    <option value="carrot">گاجر (Carrot)</option>
-                </select>
-                
-                <input type="number" id="priceInput" placeholder="Price (PKR)">
-                
-                <select id="unitSelect">
-                    <option value="kg">کیلو (kg)</option>
-                    <option value="dozen">درجن (Dozen)</option>
-                    <option value="piece">تکڑا (Piece)</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <select id="qualitySelect">
-                    <option value="good">اچھا (Good)</option>
-                    <option value="medium">درمیانہ (Medium)</option>
-                    <option value="fresh">تازہ (Fresh)</option>
-                    <option value="premium">اعلیٰ (Premium)</option>
-                </select>
-                
-                <input type="date" id="dateInput" value="">
-                
-                <button onclick="addRate()">➕ Add New Rate</button>
-                <button onclick="updateAll()" style="background: #ff9800;">🔄 Update All</button>
-            </div>
-            
-            <div id="successMessage" class="message success">✅ Rate updated successfully!</div>
-            
-            <!-- Current Rates Display -->
-            <h2>📋 Current Market Rates</h2>
-            <table class="rates-table" id="ratesTable">
+        <!-- City Tabs -->
+        <div class="city-tabs">
+            <button class="tab-btn active" onclick="showCity('multan')">ملتان | Multan</button>
+            <button class="tab-btn" onclick="showCity('khanewal')">خانیوال | Khanewal</button>
+            <button class="tab-btn" onclick="showCity('kabirwala')">کبیروالہ | Kabirwala</button>
+        </div>
+        
+        <!-- Multan Market -->
+        <div class="market-card active" id="multan-card">
+            <h2 class="market-title">🏙️ ملتان فروٹ اینڈ سبزی منڈی | Multan Fruit & Vegetable Market</h2>
+            <table class="veg-table">
                 <thead>
                     <tr>
-                        <th>City</th>
-                        <th>Vegetable</th>
-                        <th>Price</th>
-                        <th>Unit</th>
-                        <th>Quality</th>
-                        <th>Date</th>
-                        <th>Action</th>
+                        <th>سبزی | Vegetable</th>
+                        <th>قیمت | Price</th>
+                        <th>یونٹ | Unit</th>
+                        <th>کوالٹی | Quality</th>
                     </tr>
                 </thead>
-                <tbody id="ratesBody">
-                    <!-- Rates will load here -->
+                <tbody id="multan-rates">
+                    <!-- JavaScript se load hoga -->
                 </tbody>
             </table>
-            
-            <!-- Bulk Operations -->
-            <h2>📁 Bulk Operations</h2>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                <p><strong>Export/Import Options:</strong></p>
-                <button onclick="exportToExcel()">📥 Export to Excel</button>
-                <button onclick="importFromExcel()">📤 Import from Excel</button>
-                <button class="danger-btn" onclick="deleteAll()">🗑️ Delete All Rates</button>
-            </div>
-            
-            <!-- Instructions -->
-            <div style="margin-top: 30px; padding: 20px; background: #e8f5e8; border-radius: 10px;">
-                <h3>📖 Instructions:</h3>
-                <p>1. Daily rates update karne ke liye form use karein</p>
-                <p>2. Excel se bulk update ke liye template download karein</p>
-                <p>3. Password change karne ke liye contact developer</p>
+            <div class="update-time" id="multan-update">
+                ✅ آخری اپ ڈیٹ: لوڈ ہو رہا ہے... | Last Update: Loading...
             </div>
         </div>
+        
+        <!-- Khanewal Market -->
+        <div class="market-card" id="khanewal-card">
+            <h2 class="market-title">🏙️ خانیوال ہول سیل مارکیٹ | Khanewal Wholesale Market</h2>
+            <table class="veg-table">
+                <thead>
+                    <tr>
+                        <th>سبزی | Vegetable</th>
+                        <th>قیمت | Price</th>
+                        <th>یونٹ | Unit</th>
+                        <th>کوالٹی | Quality</th>
+                    </tr>
+                </thead>
+                <tbody id="khanewal-rates">
+                    <!-- JavaScript se load hoga -->
+                </tbody>
+            </table>
+            <div class="update-time" id="khanewal-update">
+                ✅ آخری اپ ڈیٹ: لوڈ ہو رہا ہے... | Last Update: Loading...
+            </div>
+        </div>
+        
+        <!-- Kabirwala Market -->
+        <div class="market-card" id="kabirwala-card">
+            <h2 class="market-title">🏙️ کبیروالہ زرعی مارکیٹ | Kabirwala Agricultural Market</h2>
+            <table class="veg-table">
+                <thead>
+                    <tr>
+                        <th>سبزی | Vegetable</th>
+                        <th>قیمت | Price</th>
+                        <th>یونٹ | Unit</th>
+                        <th>کوالٹی | Quality</th>
+                    </tr>
+                </thead>
+                <tbody id="kabirwala-rates">
+                    <!-- JavaScript se load hoga -->
+                </tbody>
+            </table>
+            <div class="update-time" id="kabirwala-update">
+                ✅ آخری اپ ڈیٹ: لوڈ ہو رہا ہے... | Last Update: Loading...
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2024 پاکستان سبزی منڈی ریٹس | Pakistan Sabzi Mandi Rates</p>
+            <p>📞 رابطہ: info@sabzimandipakistan.com | 📍 ملتان، پاکستان</p>
+            <p style="margin-top: 15px;">
+                <a href="admin.html" style="color: #228B22; text-decoration: none; font-weight: bold;">
+                    🔐 ایڈمن پینل | Admin Panel (پاسورڈ سے محفوظ)
+                </a>
+            </p>
+        </footer>
     </div>
 
+    <!-- COMPLETE JAVASCRIPT -->
     <script>
-        // ADMIN PASSWORD - CHANGE THIS
-        const ADMIN_PASSWORD = "pakistan123";
-        
-        // Sample rates data
-        let ratesData = [
-            { id: 1, city: "multan", vegetable: "tomato", price: "80", unit: "kg", quality: "good", date: "2024-01-15" },
-            { id: 2, city: "multan", vegetable: "onion", price: "60", unit: "kg", quality: "medium", date: "2024-01-15" },
-            { id: 3, city: "khanewal", vegetable: "potato", price: "42", unit: "kg", quality: "fresh", date: "2024-01-15" }
-        ];
-        
-        // Login function
-        function login() {
-            const password = document.getElementById('adminPassword').value;
-            if(password === ADMIN_PASSWORD) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
-                document.getElementById('logoutBtn').style.display = 'block';
-                loadRatesTable();
-                setDefaultDate();
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-            }
-        }
-        
-        // Logout function
-        function logout() {
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'none';
-            document.getElementById('adminPassword').value = '';
-        }
-        
-        // Set today's date as default
-        function setDefaultDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dateInput').value = today;
-        }
-        
-        // Add new rate
-        function addRate() {
-            const city = document.getElementById('citySelect').value;
-            const vegetable = document.getElementById('vegetableSelect').value;
-            const price = document.getElementById('priceInput').value;
-            const unit = document.getElementById('unitSelect').value;
-            const quality = document.getElementById('qualitySelect').value;
-            const date = document.getElementById('dateInput').value;
-            
-            if(!city || !vegetable || !price) {
-                alert("Please fill all required fields!");
-                return;
+        // Database Class
+        class SabziMandiDB {
+            constructor() {
+                this.DB_KEY = 'pakistan_mandi_db_v3';
+                this.initDatabase();
             }
             
-            // Add to rates data
-            ratesData.push({
-                id: ratesData.length + 1,
-                city: city,
-                vegetable: vegetable,
-                price: price,
-                unit: unit,
-                quality: quality,
-                date: date
-            });
+            initDatabase() {
+                if (!localStorage.getItem(this.DB_KEY)) {
+                    const defaultData = {
+                        version: 3,
+                        last_updated: new Date().toISOString(),
+                        cities: ['multan', 'khanewal', 'kabirwala'],
+                        vegetables: [
+                            {id: 1, name: 'tomato', urdu: 'ٹماٹر'},
+                            {id: 2, name: 'onion', urdu: 'پیاز'},
+                            {id: 3, name: 'potato', urdu: 'آلو'},
+                            {id: 4, name: 'cucumber', urdu: 'کھیرا'},
+                            {id: 5, name: 'capsicum', urdu: 'شملہ مرچ'},
+                            {id: 6, name: 'spinach', urdu: 'پالک'},
+                            {id: 7, name: 'carrot', urdu: 'گاجر'},
+                            {id: 8, name: 'brinjal', urdu: 'بینگن'},
+                            {id: 9, name: 'chilli', urdu: 'مرچ'},
+                            {id: 10, name: 'cauliflower', urdu: 'پھول گوبھی'}
+                        ],
+                        rates: this.getDefaultRates()
+                    };
+                    this.saveData(defaultData);
+                    console.log('Database initialized with default data');
+                }
+            }
             
-            // Show success message
-            document.getElementById('successMessage').style.display = 'block';
+            getDefaultRates() {
+                const today = this.getTodayDate();
+                return [
+                    {id: 1, city: 'multan', veg_id: 1, price: '85', unit: 'kg', quality: 'good', date: today},
+                    {id: 2, city: 'multan', veg_id: 2, price: '65', unit: 'kg', quality: 'medium', date: today},
+                    {id: 3, city: 'multan', veg_id: 3, price: '48', unit: 'kg', quality: 'fresh', date: today},
+                    {id: 4, city: 'multan', veg_id: 4, price: '55', unit: 'kg', quality: 'good', date: today},
+                    {id: 5, city: 'khanewal', veg_id: 1, price: '82', unit: 'kg', quality: 'good', date: today},
+                    {id: 6, city: 'khanewal', veg_id: 2, price: '62', unit: 'kg', quality: 'medium', date: today},
+                    {id: 7, city: 'kabirwala', veg_id: 1, price: '88', unit: 'kg', quality: 'good', date: today},
+                    {id: 8, city: 'kabirwala', veg_id: 3, price: '50', unit: 'kg', quality: 'fresh', date: today}
+                ];
+            }
+            
+            getTodayDate() {
+                return new Date().toISOString().split('T')[0];
+            }
+            
+            getRatesByCity(city) {
+                const data = JSON.parse(localStorage.getItem(this.DB_KEY));
+                const today = this.getTodayDate();
+                
+                const cityRates = data.rates.filter(rate => 
+                    rate.city === city && rate.date === today
+                );
+                
+                // Map vegetable names
+                return cityRates.map(rate => {
+                    const veg = data.vegetables.find(v => v.id === rate.veg_id);
+                    return {
+                        ...rate,
+                        vegetable_name: veg ? veg.name : 'Unknown',
+                        vegetable_urdu: veg ? veg.urdu : 'نامعلوم'
+                    };
+                });
+            }
+            
+            getAllRates() {
+                const data = JSON.parse(localStorage.getItem(this.DB_KEY));
+                return data ? data.rates : [];
+            }
+            
+            addRate(city, veg_id, price, unit = 'kg', quality = 'good') {
+                const data = JSON.parse(localStorage.getItem(this.DB_KEY));
+                const newId = Date.now();
+                
+                const newRate = {
+                    id: newId,
+                    city: city,
+                    veg_id: parseInt(veg_id),
+                    price: price.toString(),
+                    unit: unit,
+                    quality: quality,
+                    date: this.getTodayDate()
+                };
+                
+                data.rates.push(newRate);
+                data.last_updated = new Date().toISOString();
+                this.saveData(data);
+                this.notifyUpdate();
+                
+                return newRate;
+            }
+            
+            updateRate(rateId, newPrice, newQuality) {
+                const data = JSON.parse(localStorage.getItem(this.DB_KEY));
+                const rateIndex = data.rates.findIndex(rate => rate.id === rateId);
+                
+                if (rateIndex !== -1) {
+                    data.rates[rateIndex].price = newPrice.toString();
+                    data.rates[rateIndex].quality = newQuality;
+                    data.rates[rateIndex].date = this.getTodayDate();
+                    data.last_updated = new Date().toISOString();
+                    
+                    this.saveData(data);
+                    this.notifyUpdate();
+                    return true;
+                }
+                return false;
+            }
+            
+            deleteRate(rateId) {
+                const data = JSON.parse(localStorage.getItem(this.DB_KEY));
+                const initialLength = data.rates.length;
+                
+                data.rates = data.rates.filter(rate => rate.id !== rateId);
+                data.last_updated = new Date().toISOString();
+                
+                this.saveData(data);
+                this.notifyUpdate();
+                
+                return initialLength !== data.rates.length;
+            }
+            
+            getVegetables() {
+                const data = JSON.parse(localStorage.getItem(this.DB_KEY));
+                return data ? data.vegetables : [];
+            }
+            
+            getLastUpdateTime() {
+                const data = JSON.parse(localStorage.getItem(this.DB_KEY));
+                return data ? data.last_updated : null;
+            }
+            
+            saveData(data) {
+                localStorage.setItem(this.DB_KEY, JSON.stringify(data));
+            }
+            
+            notifyUpdate() {
+                localStorage.setItem('mandi_db_updated', Date.now().toString());
+                
+                if (typeof BroadcastChannel !== 'undefined') {
+                    const channel = new BroadcastChannel('mandi_updates');
+                    channel.postMessage('rates_updated');
+                }
+            }
+            
+            onUpdate(callback) {
+                window.addEventListener('storage', (e) => {
+                    if (e.key === 'mandi_db_updated') {
+                        callback();
+                    }
+                });
+                
+                if (typeof BroadcastChannel !== 'undefined') {
+                    const channel = new BroadcastChannel('mandi_updates');
+                    channel.addEventListener('message', (event) => {
+                        if (event.data === 'rates_updated') {
+                            callback();
+                        }
+                    });
+                }
+            }
+        }
+
+        // Create global database instance
+        const mandiDB = new SabziMandiDB();
+
+        // User Interface Functions
+        const cityNames = {
+            'multan': {en: 'Multan', ur: 'ملتان'},
+            'khanewal': {en: 'Khanewal', ur: 'خانیوال'},
+            'kabirwala': {en: 'Kabirwala', ur: 'کبیروالہ'}
+        };
+
+        const qualityNames = {
+            'good': {en: 'Good', ur: 'اچھا'},
+            'medium': {en: 'Medium', ur: 'درمیانہ'},
+            'fresh': {en: 'Fresh', ur: 'تازہ'},
+            'premium': {en: 'Premium', ur: 'اعلیٰ'}
+        };
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            notification.style.background = type === 'success' ? '#4CAF50' : 
+                                           type === 'error' ? '#f44336' : '#2196F3';
+            
             setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
+                notification.style.display = 'none';
             }, 3000);
-            
-            // Reload table
-            loadRatesTable();
-            
-            // Clear form
-            document.getElementById('priceInput').value = '';
         }
-        
-        // Load rates in table
-        function loadRatesTable() {
-            const tbody = document.getElementById('ratesBody');
-            tbody.innerHTML = '';
+
+        function loadRatesForCity(city) {
+            const rates = mandiDB.getRatesByCity(city);
+            const tableBody = document.getElementById(`${city}-rates`);
+            const updateDiv = document.getElementById(`${city}-update`);
             
-            ratesData.forEach(rate => {
-                const row = `<tr>
-                    <td>${getCityName(rate.city)}</td>
-                    <td>${getVegetableName(rate.vegetable)}</td>
-                    <td>₨ ${rate.price}</td>
-                    <td>${rate.unit}</td>
-                    <td>${getQualityName(rate.quality)}</td>
-                    <td>${rate.date}</td>
-                    <td>
-                        <button onclick="editRate(${rate.id})">✏️ Edit</button>
-                        <button class="danger-btn" onclick="deleteRate(${rate.id})">🗑️ Delete</button>
+            if (!tableBody) return;
+            
+            let html = '';
+            
+            if (rates.length === 0) {
+                html = `<tr>
+                    <td colspan="4" style="text-align:center; padding:30px; color:#666;">
+                        📭 آج کی قیمتیں دستیاب نہیں ہیں<br>
+                        Today's rates are not available
                     </td>
                 </tr>`;
-                tbody.innerHTML += row;
+            } else {
+                rates.forEach(rate => {
+                    const quality = qualityNames[rate.quality] || {ur: rate.quality, en: rate.quality};
+                    html += `
+                    <tr>
+                        <td>${rate.vegetable_urdu} | ${rate.vegetable_name}</td>
+                        <td class="price">₨ ${rate.price}</td>
+                        <td>${rate.unit}</td>
+                        <td>${quality.ur} | ${quality.en}</td>
+                    </tr>`;
+                });
+            }
+            
+            tableBody.innerHTML = html;
+            
+            // Update timestamp
+            const lastUpdate = mandiDB.getLastUpdateTime();
+            if (lastUpdate) {
+                const time = new Date(lastUpdate).toLocaleTimeString('en-PK', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                updateDiv.innerHTML = `✅ آخری اپ ڈیٹ: ${time} | Last Update: ${time}`;
+            }
+        }
+
+        function showCity(city) {
+            // Update active tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show selected city card
+            document.querySelectorAll('.market-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`${city}-card`).classList.add('active');
+            
+            // Load rates for this city
+            loadRatesForCity(city);
+        }
+
+        function setupAutoRefresh() {
+            mandiDB.onUpdate(() => {
+                showNotification('🔄 قیمتیں اپ ڈیٹ ہو گئی ہیں! | Rates updated!', 'success');
+                
+                // Reload current city
+                const activeCard = document.querySelector('.market-card.active');
+                if (activeCard) {
+                    const city = activeCard.id.replace('-card', '');
+                    loadRatesForCity(city);
+                }
             });
         }
-        
-        // Helper functions
-        function getCityName(code) {
-            const cities = {
-                'multan': 'Multan',
-                'khanewal': 'Khanewal',
-                'kabirwala': 'Kabirwala'
-            };
-            return cities[code] || code;
+
+        function initialize() {
+            // Load Multan rates by default
+            loadRatesForCity('multan');
+            
+            // Setup auto-refresh
+            setupAutoRefresh();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                const activeCard = document.querySelector('.market-card.active');
+                if (activeCard) {
+                    const city = activeCard.id.replace('-card', '');
+                    loadRatesForCity(city);
+                }
+            }, 30000);
+            
+            console.log('Sabzi Mandi App initialized successfully');
         }
-        
-        function getVegetableName(code) {
-            const vegetables = {
-                'tomato': 'ٹماٹر (Tomato)',
-                'onion': 'پیاز (Onion)',
-                'potato': 'آلو (Potato)',
-                'cucumber': 'کھیرا (Cucumber)',
-                'capsicum': 'شملہ مرچ (Capsicum)',
-                'spinach': 'پالک (Spinach)',
-                'carrot': 'گاجر (Carrot)'
-            };
-            return vegetables[code] || code;
-        }
-        
-        function getQualityName(code) {
-            const qualities = {
-                'good': 'اچھا (Good)',
-                'medium': 'درمیانہ (Medium)',
-                'fresh': 'تازہ (Fresh)',
-                'premium': 'اعلیٰ (Premium)'
-            };
-            return qualities[code] || code;
-        }
-        
-        // Other functions
-        function updateAll() {
-            alert("All rates will be updated from the main database.");
-        }
-        
-        function exportToExcel() {
-            alert("Rates exported to Excel format.");
-        }
-        
-        function importFromExcel() {
-            alert("Please upload Excel file with rates data.");
-        }
-        
-        function deleteAll() {
-            if(confirm("Are you sure you want to delete ALL rates?")) {
-                ratesData = [];
-                loadRatesTable();
-                alert("All rates deleted!");
-            }
-        }
-        
-        function editRate(id) {
-            alert("Edit rate with ID: " + id);
-        }
-        
-        function deleteRate(id) {
-            if(confirm("Delete this rate?")) {
-                ratesData = ratesData.filter(rate => rate.id !== id);
-                loadRatesTable();
-            }
-        }
-        
-        // Initialize
-        window.onload = function() {
-            // Check if already logged in (for demo)
-            const isLoggedIn = localStorage.getItem('adminLoggedIn');
-            if(isLoggedIn) {
-                login();
-            }
-        };
+
+        // Start the app
+        window.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
